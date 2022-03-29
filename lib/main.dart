@@ -1,10 +1,15 @@
+//import 'dart:js';
+import 'package:arko/home.dart';
+import 'package:arko/add.dart';
+import 'package:arko/settings.dart';
+import 'package:arko/location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 //import 'dart:html';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:arko/location.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/scheduler.dart';
 
 void main() => runApp(MyApp());
 
@@ -13,7 +18,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Google Maps Demo',
-      home: MapSample(),
+      initialRoute: '/home',
+      routes:{
+        //'/': (context) => Loading(),
+        '/home': (context) => Home(),
+        '/map': (context) => MapSample(),
+        '/add': (context) => Add(),
+        '/settings': (context) => Settings(),
+      }
+//      home: MapSample(),
     );
   }
 }
@@ -32,17 +45,21 @@ class MapSampleState extends State<MapSample> {
   List<LatLng> polylineCoordinates = [];
   Set<Marker> _markers = Set<Marker>();
   PolylinePoints polylinePoints = PolylinePoints();
+  Map data = {};
 
   static final CameraPosition _initialCameraPos = CameraPosition(
     target: LatLng(30.455000, -84.253334),
     zoom: 12,
   );
 
- /* @override
+  @override
   void initState(){
     super.initState();
-        _setMarker(LatLng(0.0, 0.0));
-  }*/
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      testFunction();
+    });
+
+  }
   int _markerCounter = 1;
 
   void _setMarker(LatLng point){
@@ -60,31 +77,20 @@ class MapSampleState extends State<MapSample> {
 
   @override
   Widget build(BuildContext context) {
+
+    data = ModalRoute.of(context)!.settings.arguments as Map;
+    print(data['location']);
+
+    //testFunction();
+    //Future.delayed(Duration.zero, () => testFunction());
+    //SchedulerBinding.instance.addPostFrameCallback((_) => testFunction());
+
+
+
     return Scaffold(
       appBar: AppBar(title: Text('Directions'),),
       body: Column(
         children: [
-          /*Row(children: [
-            Expanded(
-                child: TextFormField(
-                  controller: _originLocation,
-                  textCapitalization: TextCapitalization.words,
-                  decoration: InputDecoration(hintText: 'Enter Current Location Address'),
-                  onChanged: (value){
-                    print(value);
-                  },
-                )
-            ),
-            IconButton(
-                onPressed: () async {
-                  var loc = await Locations().getPlace(_originLocation.text);
-                  var latlong = await _getPlaceTest(loc);
-                  //_setMarker(latlong);
-                },
-                icon: Icon(Icons.search),
-            )
-          ],
-          ),*/
           Row(children: [
             Expanded(
                 child: TextFormField(
@@ -104,6 +110,7 @@ class MapSampleState extends State<MapSample> {
                 print(await Locations().getPosition());
                 print(loc);
                 calcRoute(await Locations().getPosition(), latlong);
+                //testFunction();
               },
               icon: Icon(Icons.search),
             )
@@ -126,24 +133,19 @@ class MapSampleState extends State<MapSample> {
           ),
         ],
       ),
-
-      /*floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async{
-          Position position = await Locations().getPosition();
-          final GoogleMapController controller = await _controller.future;
-          controller.animateCamera(CameraUpdate.newCameraPosition(
-              CameraPosition(target: LatLng(position.latitude, position.longitude),zoom: 14),
-          ));
-          var loc = await Locations().getPlace(_destinationLocation.text);
-          var latlong = await _getPlaceTest(loc);
-          calcRoute(position, latlong);
-        },
-        label: Text('Current Location'),
-        icon: Icon(Icons.location_history),
-      ),*/
     );
   }
 
+
+
+  Future<void> testFunction() async{
+    var loc = await Locations().getPlace(data['location']);
+    var latlong = await _getPlaceTest(loc);
+    _setMarker(latlong);
+    //print(await Locations().getPosition());
+    //print(loc);
+    calcRoute(await Locations().getPosition(), latlong);
+  }
 
   Future<void> _goToPlace(Map<String, dynamic> place) async {
     final double lat = place['geometry']['location']['lat'];
