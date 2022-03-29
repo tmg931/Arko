@@ -22,9 +22,6 @@ class _AddState extends State<Add> {
               controller: _locationEntry,
               textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(hintText: 'Enter Address To Save'),
-              onChanged: (value){
-                print(value);
-              },
             ))
           ],),
           Row(children: [
@@ -32,9 +29,6 @@ class _AddState extends State<Add> {
               controller: _titleEntry,
               textCapitalization: TextCapitalization.words,
               decoration: InputDecoration(hintText: 'Enter Name To Save'),
-              onChanged: (value){
-                print(value);
-              },
             ))
           ],),
           ElevatedButton(
@@ -47,8 +41,6 @@ class _AddState extends State<Add> {
               title.add(_titleEntry.text);
               prefs.setStringList('loc', loc);
               prefs.setStringList('title', title);
-              print(loc);
-              print(title);
             },
           ),
           ElevatedButton(

@@ -35,11 +35,11 @@ class _HomeState extends State<Home> {
                   Icons.settings,
                   color: Colors.grey[600],
                   size: 48.0,),
-                label: Text('Change Settings or Add Location', style: TextStyle(fontSize: 32.0,color: Colors.grey[900]),),
+                label: Text('Change Settings or Add New Location', style: TextStyle(fontSize: 32.0,color: Colors.grey[900]),),
                 style: ElevatedButton.styleFrom(primary: Colors.amber[200]),
               ),
             ),
-            Column(
+            /*Column(
               children: savedLoc.map((e) {
                 return Card(
                     child: ListTile(
@@ -53,7 +53,45 @@ class _HomeState extends State<Home> {
                     ),
                 );
               }).toList(),
-            )
+            ),*/
+            Card(
+              child: ListTile(
+                onTap: (){},
+                title: Text('test'),
+              ),
+            ),
+            Expanded(
+              child: Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: savedLoc.length,
+                      itemBuilder: (context,index){
+                        return Card(
+                          child: ListTile(
+                            onTap: (){
+                              Navigator.pushNamed(context, '/map', arguments: {
+                                'location': savedLoc[index].location,
+                              });
+                            },
+                            title: Text('Go to ${savedLoc[index].title}', style: TextStyle(fontSize: 28.0),),
+                            tileColor: Colors.blue[200],
+                            leading: Icon(
+                              Icons.location_pin,
+                              size: 40.0,
+                            ),
+                            trailing: Icon(
+                              Icons.arrow_forward,
+                            ),
+                          ),
+                        );
+                      },
+                      
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
