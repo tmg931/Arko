@@ -19,6 +19,7 @@ class Locations{
    Future<Map<String, dynamic>> getPlace(String input) async{
      final placeId = await getPlaceID(input);
      final String url = 'https://maps.googleapis.com/maps/api/place/details/json?place_id=$placeId&key=$key';
+     print(url);
      var response = await http.get(Uri.parse(url));
      var json = convert.jsonDecode(response.body);
      var results = json['result'] as Map<String, dynamic>;
@@ -26,6 +27,16 @@ class Locations{
      getPosition();
      return results;
 
+   }
+
+   Future<String> nextDirection(Position cur, LatLng des) async{
+     final String url = 'https://maps.googleapis.com/maps/api/directions/json?origin=${cur.latitude},${cur.longitude}&destination=${des.latitude},${des.longitude}&mode=walking&avoidHighways=false&avoidFerries=true&avoidTolls=false&key=$key';
+     var response = await http.get(Uri.parse(url));
+     var json = convert.jsonDecode(response.body);
+     var results = json['routes'][0]['legs'][0]['steps'][0]['html_instructions'] as String;
+     print(results);
+     //getPosition();
+     return results;
    }
 
    Future<Position> getPosition() async{
@@ -54,7 +65,6 @@ class Locations{
 
      Position position = await Geolocator.getCurrentPosition();
 
-     print("AAAAAAAAAAAAAAA!!!!!!!!!!!!!!!!!!!!");
      print(position);
      return position;
    }

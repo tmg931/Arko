@@ -39,6 +39,8 @@ dependencies:
   geolocator: ^8.2.0
   flutter_polyline_points: 1.0.0
   shared_preferences: ^2.0.13
+  google_maps_widget: ^1.0.0
+  styled_text: ^5.0.0+1
 
 dev_dependencies:
   flutter_test:

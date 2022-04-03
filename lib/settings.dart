@@ -29,7 +29,7 @@ class _SettingsState extends State<Settings> {
               ),
               ElevatedButton.icon(
                 onPressed: () async {
-                  await Navigator.pushNamed(context, '/add');
+                  await Navigator.pushNamed(context, '/remove');
                   //setState(() {getSavedLocations();});
                 },
                 icon: Icon(

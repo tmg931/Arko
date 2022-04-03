@@ -8,8 +8,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Address> savedLoc = [];
- // TextEditingController _locationEntry = TextEditingController();
- // TextEditingController _titleEntry = TextEditingController();
 
   @override
   void initState() {
@@ -39,25 +37,20 @@ class _HomeState extends State<Home> {
                 style: ElevatedButton.styleFrom(primary: Colors.amber[200]),
               ),
             ),
-            /*Column(
-              children: savedLoc.map((e) {
-                return Card(
-                    child: ListTile(
-                      onTap: (){
-                        Navigator.pushNamed(context, '/map', arguments: {
-                          'location': e.location,
-                        });
-                      },
-                      title: Text('Go to ${e.title}'),
-                      tileColor: Colors.red[200],
-                    ),
-                );
-              }).toList(),
-            ),*/
             Card(
               child: ListTile(
-                onTap: (){},
-                title: Text('test'),
+                onTap: (){
+                  Navigator.pushNamed(context, '/unsaved');
+                },
+                title: Text('Search for Location', style: TextStyle(fontSize: 28.0),),
+                tileColor: Colors.teal[100],
+                leading: Icon(
+                  Icons.search,
+                  size: 40.0,
+                ),
+                trailing: Icon(
+                  Icons.arrow_forward,
+                ),
               ),
             ),
             Expanded(
@@ -106,6 +99,7 @@ class _HomeState extends State<Home> {
     for(int i = 0; i < loc.length; i++){
       savedLoc.add(Address(title: title[i], location: loc[i]));
     }
+    setState(() {});
   }
 
 }
