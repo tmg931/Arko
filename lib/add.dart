@@ -45,6 +45,7 @@ class _AddState extends State<Add> {
                 title.add(_titleEntry.text);
                 prefs.setStringList('loc', loc);
                 prefs.setStringList('title', title);
+                Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(primary: Colors.green[400]),
             ),

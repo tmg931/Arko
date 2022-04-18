@@ -1,18 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 
 class Home extends StatefulWidget {
+  final BluetoothDevice server;
+  Home({required this.server/*=const BluetoothDevice(address: "0")*/});
   @override
   _HomeState createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
+  //BluetoothDevice server = BluetoothDevice(address: "0");
   List<Address> savedLoc = [];
+
+//  static final clientID = 0;
+  BluetoothConnection? connection;
+
+ // List<_Message> messages = List<_Message>.empty(growable: true);
+ // String _messageBuffer = '';
+
+//  final TextEditingController textEditingController =
+//  new TextEditingController();
+ // final ScrollController listScrollController = new ScrollController();
+
+  bool isConnecting = true;
+  bool get isConnected => (connection?.isConnected ?? false);
+
+  bool isDisconnecting = false;
+  bool inMap = false;
 
   @override
   void initState() {
     super.initState();
+    //server = ModalRoute.of(context)!.settings.arguments;
     getSavedLocations();
+    BluetoothConnection.toAddress(widget.server.address).then((_connection) {
+      print('Connected to the device');
+      connection = _connection;
+      setState(() {
+        isConnecting = false;
+        isDisconnecting = false;
+      });
+
+      connection!.input!.listen(_onDataReceived).onDone(() {
+        // Example: Detect which side closed the connection
+        // There should be `isDisconnecting` flag to show are we are (locally)
+        // in middle of disconnecting process, should be set before calling
+        // `dispose`, `finish` or `close`, which all causes to disconnect.
+        // If we except the disconnection, `onDone` should be fired as result.
+        // If we didn't except this (no flag set), it means closing by remote.
+        if (isDisconnecting) {
+          print('Disconnecting locally!');
+        } else {
+          print('Disconnected remotely!');
+        }
+        if (this.mounted) {
+          setState(() {});
+        }
+      });
+    }).catchError((error) {
+      print('Cannot connect, exception occured');
+      print(error);
+    });
+  }
+
+  @override
+  void dispose() {
+    // Avoid memory leak (`setState` after dispose) and disconnect
+    if (isConnected) {
+      isDisconnecting = true;
+      connection?.dispose();
+      connection = null;
+    }
+
+    super.dispose();
   }
 
   @override
@@ -101,6 +165,39 @@ class _HomeState extends State<Home> {
     }
     setState(() {});
   }
+
+  void _onDataReceived(Uint8List data) async{
+    // Allocate buffer for parsed data
+    print(data[0]);
+    if(data[0] == 48 && inMap == false){
+      inMap = true;
+      await Navigator.pushNamed(context, '/map', arguments: {
+        'location': savedLoc[0].location,
+      });
+      inMap = false;
+      //Navigator.popUntil(context, ModalRoute.withName('/home'));
+    }
+    if(data[0] == 49){
+      /*inMap = true;
+      await Navigator.pushNamed(context, '/map', arguments: {
+        'location': savedLoc[1].location,
+      });
+      inMap = false;*/
+      //Navigator.popUntil(context, ModalRoute.withName('/home'));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String num = prefs.getString('num') ?? '123';
+      await FlutterPhoneDirectCaller.callNumber(num);
+    }
+    if(data[0] == 50 && inMap == false){
+      inMap = true;
+      await Navigator.pushNamed(context, '/map', arguments: {
+        'location': savedLoc[1].location,
+      });
+      inMap = false;
+      //Navigator.popUntil(context, ModalRoute.withName('/home'));
+    }
+  }
+
 
 }
 

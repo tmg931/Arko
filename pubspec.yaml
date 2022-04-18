@@ -41,6 +41,10 @@ dependencies:
   shared_preferences: ^2.0.13
   google_maps_widget: ^1.0.0
   styled_text: ^5.0.0+1
+  flutter_bluetooth_serial: ^0.4.0
+  scoped_model: ^1.1.0
+  url_launcher: ^6.0.20
+  flutter_phone_direct_caller: ^2.1.0
 
 dev_dependencies:
   flutter_test:
