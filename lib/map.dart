@@ -16,7 +16,7 @@ class MapSample extends StatefulWidget {
 
 class MapSampleState extends State<MapSample> {
   Completer<GoogleMapController> _controller = Completer();
-  final String key = 'AIzaSyDEHmjyJCDhghPzpYi7XOh3GBk2AK1US_A';
+  final String key = 'ENTER_KEY_HERE';
   Map<PolylineId, Polyline> polylines = {};
   List<LatLng> polylineCoordinates = [];
   Set<Marker> _markers = Set<Marker>();
